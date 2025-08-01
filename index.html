@@ -28,23 +28,6 @@
             color: #A94442;
             border-color: #A94442;
         }
-        .feature-card {
-            transition: transform 0.3s, box-shadow 0.3s;
-            backface-visibility: hidden;
-        }
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        }
-        .feature-card .back {
-            transform: rotateY(180deg);
-        }
-        .flipped .front {
-            transform: rotateY(180deg);
-        }
-        .flipped .back {
-            transform: rotateY(0deg);
-        }
         .tab.active {
             border-color: #A94442;
             background-color: #A94442;
@@ -60,6 +43,51 @@
         }
         html {
             scroll-behavior: smooth;
+        }
+        
+        /* Card Flip Animation Styles */
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s, box-shadow 0.3s;
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            border-radius: 0.5rem;
+        }
+        .card-container:hover .card-inner {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .card-container.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+        .card-container.flipped:hover .card-inner {
+            transform: rotateY(180deg) translateY(-5px);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+
+        .card-front {
+            background-color: white;
+            border: 1px solid #e5e7eb;
+        }
+
+        .card-back {
+            background-color: #A94442;
+            color: white;
+            transform: rotateY(180deg);
         }
     </style>
 </head>
@@ -153,18 +181,19 @@
             const featuresGrid = document.getElementById('features-grid');
             featuresData.forEach((feature, index) => {
                 const cardContainer = document.createElement('div');
-                cardContainer.className = 'w-full h-48 cursor-pointer group';
-                cardContainer.style.transformStyle = 'preserve-3d';
+                cardContainer.className = 'w-full h-48 cursor-pointer group card-container';
+
                 cardContainer.innerHTML = `
-                    <div class="relative w-full h-full feature-card">
-                        <div class="absolute w-full h-full front flex items-center justify-center p-4 bg-white shadow-lg rounded-lg border border-gray-200">
+                    <div class="card-inner">
+                        <div class="card-front">
                             <h3 class="text-xl font-bold text-center text-red-900">${index + 1}. ${feature.title}</h3>
                         </div>
-                        <div class="absolute w-full h-full back flex items-center justify-center p-4 bg-red-800 text-white shadow-lg rounded-lg">
+                        <div class="card-back">
                             <p class="text-sm text-center">${feature.description}</p>
                         </div>
                     </div>
                 `;
+
                 cardContainer.addEventListener('click', () => {
                     cardContainer.classList.toggle('flipped');
                 });
